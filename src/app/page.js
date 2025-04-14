@@ -1,101 +1,140 @@
+"use client";
 import Image from "next/image";
+import { Buttons, Task_container, Input } from "@/components";
+import { Add_button } from "@/components/Add_button";
+import { useState } from "react";
+import { document } from "postcss";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [task_name_input, setTask_name_input] = useState("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const input_handleOnChange = (event) => {
+    setTask_name_input(event.target.value);
+  };
+
+  const [tasks, setTasks] = useState([]);
+  const addDAta = () => {
+    setTasks([
+      ...tasks,
+      { title: task_name_input, isChecked: false, id: uuidv4() },
+    ]);
+    setTask_name_input("");
+  };
+
+  // const [delete_button, setDelete_button] = useState(tasks);
+  // const delete_button_fnc = (index) => {
+  //   setDelete_button(tasks.splice(index, 1));
+  // };
+
+  const delete_button_fnc = (id) => {
+    setTasks(tasks.filter((value) => value.id !== id));
+  };
+  const [isChecked, setIsChecked] = useState(false);
+
+  // const checkbox_handleOnChange = (id) => {
+  //   const updatedTasks = [...tasks];
+  //   updatedTasks[id].isChecked = !updatedTasks[id].isChecked;
+  //   setTasks(updatedTasks);
+  // };
+  const checkbox_handleOnChange = (id) => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === id ? { ...task, isChecked: !task.isChecked } : task
+    );
+    setTasks(updatedTasks);
+  };
+
+  const [filter, setFilter] = useState("All");
+
+  ////ajilku
+  // const act = tasks.map((value) => {
+  //     return !value.isChecked;
+  //   })
+
+  // const done = tasks.map((value) => {
+  //     return value.isChecked;
+  //   })
+
+  //   else if (filter === "Completed") {
+  //     return value.isChecked;
+  //   } else {
+  //     return filter;
+  //   }
+  // });
+
+  //ajilna
+  const filteredTasks = tasks.filter((value) => {
+    if (filter === "Active") {
+      return !value.isChecked;
+    } else if (filter === "Completed") {
+      return value.isChecked;
+    } else {
+      return true;
+    }
+  });
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-[40px] border-solid border-black bg-[#ffffff] w-[377px] py-[24px] px-[16px] rounded-[6px]">
+      <div className="flex flex-col w-[345px] gap-[32px] items-center justify-center">
+        <div className="flex flex-col w-[345px] gap-[20px] items-center justify-center">
+          <h6 className="text-black">To-Do list</h6>
+          <div className="flex flex-row gap-[6px]">
+            <Input
+              input_value={task_name_input}
+              task_name={input_handleOnChange}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <Buttons className={"h-[40px]"} text={"Add"} onClick={addDAta} />
+          </div>
+          <div className="w-[345px] flex flex-row justify-start gap-[6px] ">
+            <Buttons text={"All"} onClick={() => setFilter("All")} />
+            <Buttons text={"Active"} onClick={() => setFilter("Active")} />
+            <Buttons
+              text={"Completed"}
+              onClick={() => setFilter("Completed")}
+            />
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+        {/* <h6>No tasks yet. Add one above!</h6> */}
+        {filteredTasks.length === 0 ? (
+          <h6>No tasks yet. Add one above!</h6>
+        ) : (
+          filteredTasks.map((value, id) => {
+            return (
+              <Task_container
+                key={value.id}
+                check_name={`${value.title}`}
+                delelteClick={() => {
+                  delete_button_fnc(value.id);
+                }}
+                isChecked={value.isChecked}
+                onCheckboxChange={() => checkbox_handleOnChange(value.id)}
+              />
+            );
+          })
+        )}
+      </div>
+      <footer>
+        <h6>Powered by Pinecone academy</h6>{" "}
       </footer>
     </div>
   );
 }
+
+// "use client";
+// import React, { useState } from "react";
+// import { FileUploader } from "react-drag-drop-files";
+
+// const fileTypes = ["JPG", "PNG", "GIF"];
+
+// function DragDrop() {
+//   const [file, setFile] = useState(null);
+//   const handleChange = (file) => {
+//     setFile(file);
+//   };
+//   return (
+//     <FileUploader handleChange={handleChange} name="file" types={fileTypes} />
+//   );
+// }
+
+// export default DragDrop;
+
