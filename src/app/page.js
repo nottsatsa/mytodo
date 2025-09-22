@@ -114,7 +114,7 @@ export default function Home() {
         )}
       </div>
       <footer>
-        <h6>Powered by Pinecone academy</h6>{" "}
+        <h6>Powered by Pinecone academy</h6>
       </footer>
     </div>
   );
